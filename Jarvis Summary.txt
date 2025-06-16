@@ -1,0 +1,117 @@
+🧠 AI Voice Assistant: Jarvis
+This project is a full-stack AI voice assistant built using Python and Eel (a Python-JavaScript bridge). It features real-time voice command processing, hotword detection using Porcupine, dynamic UI interaction, and integration with web services and local applications.
+
+📁 Project Structure & File Responsibilities
+run.py — 🧩 Project Entry Point
+Launches two parallel processes using Python’s multiprocessing:
+
+startJarvis: Launches the assistant's user interface via main.start().
+
+listenHotword: Continuously listens for hotwords ("jarvis", "alexa") using the Porcupine wake word engine.
+
+Triggers the assistant interface using a simulated keypress (win + j) when a wake-word is detected.
+
+main.py — 🌐 Frontend Initialization via Eel
+Initializes Eel by pointing it to the frontend directory (www/).
+
+Plays a startup sound using playsound().
+
+Launches a lightweight, frameless browser window using Chrome App mode (index.html).
+
+Starts the Eel event loop for bidirectional communication between Python and JavaScript.
+
+engine/features.py — 🛠️ Assistant Functionalities
+Implements the core functional abilities of the assistant:
+
+playAssistantSound: Plays the startup audio (start_sound.mp3).
+
+openCommand(text): Matches command keywords against a database and opens:
+
+Desktop applications via absolute paths.
+
+Web pages via URLs.
+
+PlayYoutube(text): Extracts YouTube search terms using regex and opens the video via pywhatkit.
+
+hotword(): Loads .ppn wake-word models via Porcupine SDK and triggers UI on detection.
+
+findContact(name): Fetches phone numbers from the database (contacts table).
+
+whatsApp(name, message): Sends instant WhatsApp messages via pywhatkit.
+
+engine/command.py — 🗣️ Voice Command Routing
+Central command dispatcher for voice input:
+
+speak(text): Uses pyttsx3 (offline TTS engine) to vocalize responses and displays them in the UI via eel.displayText().
+
+takecommand(): Captures microphone input using speech_recognition and converts it to text using Google's API.
+
+allCommands(text): Exposed via eel.expose(), this function acts as the main router for executing actions based on parsed commands.
+
+engine/helper.py — 🔧 Text Utilities
+extract_yt_term(command): Parses YouTube search terms using regular expressions.
+
+remove_words(text, words_to_remove): Cleans the command input by removing filler words for better accuracy.
+
+engine/config.py — ⚙️ Configuration Constants
+Defines project-wide constants such as:
+
+python
+Copy
+Edit
+ASSISTANT_NAME = "jarvis"
+Used in hotword filtering and for personalizing assistant responses.
+
+engine/db.py — 🗃️ Database Operations
+Connects to jarvis.db (SQLite).
+
+Creates sample tables:
+
+systemCommand (command TEXT, path TEXT)
+
+webCommand (command TEXT, path TEXT)
+
+contacts (name TEXT, number TEXT)
+
+Includes commented CSV-to-DB scripts:
+
+Reads contacts.csv and inserts contact data into the database.
+
+🖥️ Frontend (UI) - www/ Directory
+index.html — 📄 User Interface Shell
+Hosts the assistant UI powered by Eel.
+
+Includes:
+
+Animated particle background.
+
+Siri-style audio waveform canvas.
+
+Voice input trigger buttons (mic, chat, settings).
+
+CSS & JS Files
+File	Role
+style.css	Visual design: dark theme, mic animation, UI layout, responsive style.
+script.js	Manages the animated canvas (e.g., moving particles and waves).
+main.js	Connects to the backend using Eel to send and receive voice commands.
+controller.js	Handles UI events like toggling views, chat input, and mic button clicks.
+
+Assets Directory
+Audio: start_sound.mp3 — startup sound on assistant launch.
+
+Images: Assistant logos, background assets.
+
+Vendor: External JS libraries or stylesheets used for UI animations and enhancements.
+
+🗃️ Database & Data Files
+jarvis.db
+Contains persistent data for:
+
+Contact list
+
+System commands (e.g., open chrome)
+
+Web commands (e.g., open YouTube)
+
+contacts.csv
+External file used to seed the contacts database via db.py.
